@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ストップウォッチ</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f4f5f7;
+      font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 40px 48px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 1.4rem;
+      color: #333;
+    }
+
+    #display {
+      font-family: "Consolas", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      color: #222;
+      margin-bottom: 32px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #fff;
+      transition: opacity 0.15s ease;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    #start-btn {
+      background: #2e9e5b;
+    }
+
+    #stop-btn {
+      background: #d9534f;
+    }
+
+    #reset-btn {
+      background: #6c757d;
+    }
+
+    #lap-btn {
+      background: #337ab7;
+    }
+
+    button:not(:disabled):hover {
+      opacity: 0.85;
+    }
+
+    #laps {
+      list-style: none;
+      margin: 24px 0 0;
+      padding: 0;
+      max-height: 240px;
+      overflow-y: auto;
+      text-align: left;
+      font-family: "Consolas", "Courier New", monospace;
+    }
+
+    #laps li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #eee;
+      color: #444;
+      font-size: 0.95rem;
+    }
+
+    #laps li:last-child {
+      border-bottom: none;
+    }
+
+    .lap-index {
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>ストップウォッチ</h1>
+    <div id="display">00:00.000</div>
+    <div class="buttons">
+      <button id="start-btn">Start</button>
+      <button id="stop-btn" disabled>Stop</button>
+      <button id="lap-btn" disabled>Lap</button>
+      <button id="reset-btn">Reset</button>
+    </div>
+    <ul id="laps"></ul>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+    const startBtn = document.getElementById("start-btn");
+    const stopBtn = document.getElementById("stop-btn");
+    const lapBtn = document.getElementById("lap-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const lapsList = document.getElementById("laps");
+
+    let startTime = 0;
+    let elapsed = 0;
+    let timerId = null;
+    let running = false;
+    let lapCount = 0;
+
+    function formatTime(ms) {
+      const totalMs = Math.max(0, Math.floor(ms));
+      const minutes = Math.floor(totalMs / 60000);
+      const seconds = Math.floor((totalMs % 60000) / 1000);
+      const millis = totalMs % 1000;
+      const pad = (value, length) => String(value).padStart(length, "0");
+      return `${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(millis, 3)}`;
+    }
+
+    function updateDisplay() {
+      elapsed = Date.now() - startTime;
+      display.textContent = formatTime(elapsed);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      startTime = Date.now() - elapsed;
+      timerId = setInterval(updateDisplay, 30);
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      lapBtn.disabled = false;
+    }
+
+    function stop() {
+      if (!running) return;
+      running = false;
+      clearInterval(timerId);
+      timerId = null;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      lapBtn.disabled = true;
+    }
+
+    function reset() {
+      running = false;
+      clearInterval(timerId);
+      timerId = null;
+      elapsed = 0;
+      lapCount = 0;
+      display.textContent = formatTime(0);
+      lapsList.innerHTML = "";
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      lapBtn.disabled = true;
+    }
+
+    function lap() {
+      if (!running) return;
+      lapCount += 1;
+      const li = document.createElement("li");
+      const indexSpan = document.createElement("span");
+      indexSpan.className = "lap-index";
+      indexSpan.textContent = `Lap ${lapCount}`;
+      const timeSpan = document.createElement("span");
+      timeSpan.textContent = formatTime(elapsed);
+      li.appendChild(indexSpan);
+      li.appendChild(timeSpan);
+      lapsList.appendChild(li);
+    }
+
+    startBtn.addEventListener("click", start);
+    stopBtn.addEventListener("click", stop);
+    lapBtn.addEventListener("click", lap);
+    resetBtn.addEventListener("click", reset);
+  </script>
+</body>
+</html>

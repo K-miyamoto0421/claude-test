@@ -18,7 +18,7 @@ def add(a: Number, b: Number) -> Number:
     Raises:
         TypeError: a または b が数値でない場合。
     """
-    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+    if isinstance(a, bool) or isinstance(b, bool) or not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
         raise TypeError(f"Operands must be numeric, got {type(a).__name__} and {type(b).__name__}")
     return a + b
 
@@ -36,7 +36,7 @@ def subtract(a: Number, b: Number) -> Number:
     Raises:
         TypeError: a または b が数値でない場合。
     """
-    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+    if isinstance(a, bool) or isinstance(b, bool) or not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
         raise TypeError(f"Operands must be numeric, got {type(a).__name__} and {type(b).__name__}")
     return a - b
 
@@ -54,7 +54,7 @@ def multiply(a: Number, b: Number) -> Number:
     Raises:
         TypeError: a または b が数値でない場合。
     """
-    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+    if isinstance(a, bool) or isinstance(b, bool) or not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
         raise TypeError(f"Operands must be numeric, got {type(a).__name__} and {type(b).__name__}")
     return a * b
 
@@ -73,7 +73,7 @@ def divide(a: Number, b: Number) -> float:
         TypeError: a または b が数値でない場合。
         ValueError: b がゼロの場合。
     """
-    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+    if isinstance(a, bool) or isinstance(b, bool) or not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
         raise TypeError(f"Operands must be numeric, got {type(a).__name__} and {type(b).__name__}")
     if b == 0:
         raise ValueError("Cannot divide by zero")
